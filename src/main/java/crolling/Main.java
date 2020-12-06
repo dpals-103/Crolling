@@ -5,6 +5,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -41,6 +44,71 @@ public class Main {
 		
 		//쉬는 구간 
 		Util.sleep(1000);
+		
+		System.out.println("번호 / 제목 / 댓글수 / 조회수 / 추천수");
+		// css셀렉터로 이미지 찾아내기 
+		
+		List<WebElement> listElements = driver
+				.findElements(By.cssSelector(".cntList > .post_wrap li"));
+	
+		
+		for(WebElement listElement : listElements) {
+			
+			String src = listElement.getAttribute("src"); 
+			
+			int id = Util.getAsInt(listElement.findElement(By.cssSelector(".post_wrap > li > .rankNum > span")).getText().trim());
+			String title = listElement.findElement(By.cssSelector(".post_wrap > li > dl > dt > a")).getAttribute("title").trim();
+			String repleNum = listElement.findElement(By.cssSelector(".post_wrap > li > dl > dt > .reple-num")).getText().trim();
+			String count = listElement.findElement(By.cssSelector(".post_wrap > li > dl > .info > .count ")).getText().trim();
+			String recommend = listElement.findElement(By.cssSelector(".post_wrap > li > dl > .info > .rcm ")).getText().trim();
+			
+			
+			/* 아이피 찾기 
+			String ipStart = "";
+			
+			try {
+				WebElement ipElement = listElement.findElement(By.cssSelector(".gall_writer > .ip"));
+				ipStart = ipElement.getText().trim();
+			} catch (NoSuchElementException e) {
+				
+			}
+			*/
+		
+			
+			/* 포함 찾기 
+			if(src.contains("tr.us-post") == false ) {
+				continue;
+			}*/		
+		
+			
+			DCInsideArticle article = new DCInsideArticle(id, title, repleNum, count, recommend);
+			System.out.println(article);
+			
+			/*
+			BufferedImage saveImage = null;
+			
+			try {
+				saveImage = ImageIO.read(new URL(src));
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+			
+			if (saveImage != null) {
+				try {
+					
+					String fileName = src.split("/")[3]; 
+					fileName = fileName.split("\\?")[0];
+					ImageIO.write(saveImage, "jpg", new File("downloads/" + fileName + ".jpg"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			*/
+			
+		
+		}
+		
+		
 	}
 	
 }
